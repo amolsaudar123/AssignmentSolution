@@ -1,4 +1,4 @@
-# AssignmentSolution
+# SMARTe Assignment
 
 
 Sudoku:
@@ -41,3 +41,14 @@ Rule 2: rank of card must must be in sequence
 			- else return false.
 
 
+****************************************************************************************
+
+*Enhancements*
+
+Sudoku:
+
+* Row Validation
+* Column Validation
+* Cell Validation
+* Logic wise comments 
+ 

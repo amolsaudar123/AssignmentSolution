@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
+
 /**
- *
  * @author Amol Saudar
  */
 public class EligibilityFinder implements Utility {
@@ -15,6 +15,7 @@ public class EligibilityFinder implements Utility {
 
     /**
      * Following function will check if digit is present in the row or not
+     *
      * @param sudoku
      * @param row
      * @param digit
@@ -27,7 +28,7 @@ public class EligibilityFinder implements Utility {
     }
 
     /**
-     *Following function will check if digit is present in the column  or not
+     * Following function will check if digit is present in the column  or not
      *
      * @param sudoku
      * @param column
@@ -41,7 +42,7 @@ public class EligibilityFinder implements Utility {
     }
 
     /**
-     *Following function will check if digit is present in the 3x3 sub grid or not
+     * Following function will check if digit is present in the 3x3 sub grid or not
      *
      * @param sudoku
      * @param row
@@ -52,9 +53,13 @@ public class EligibilityFinder implements Utility {
     @Override
     public boolean isDigitSafeInSubGrid(int[][] sudoku, int row, int column, int digit) {
         LOGGER.log(Level.INFO, "RULE 3: DIGIT MUST BE UNIQUE IN 3X3 GRID");
-        int subGridRowStart = row - row % 3; //3-3%3= 3
-        int subGridColStart = column - column % 3; //2-2%3
+
+        int subGridRowStart = row - row % 3; // row start index for the 3x3 sub grid
+        int subGridColStart = column - column % 3; // column start index for the 3x3 sub grid
+
         boolean subGridEligibility = false;
+
+        //checking if digit is present or not in 3x3 sub grid
         for (int rowIndex = subGridRowStart; rowIndex < subGridRowStart + 3; rowIndex++) {
             for (int columnIndex = subGridColStart; columnIndex < subGridColStart + 3; columnIndex++) {
                 if (sudoku[rowIndex][columnIndex] == digit) {
@@ -68,7 +73,7 @@ public class EligibilityFinder implements Utility {
     }
 
     /**
-     *Following function will check if digit is present in the row, column or in 3x3 sub grid
+     * Following function will check if digit is present in the row, column or in 3x3 sub grid
      *
      * @param sudoku
      * @param row
@@ -78,13 +83,19 @@ public class EligibilityFinder implements Utility {
      */
 
     public boolean checkValidity(int[][] sudoku, int row, int column, int digit) throws InvalidDigitException {
-        boolean eligibility= false;
+        boolean eligibility = false;
         LOGGER.log(Level.INFO, "***************************");
         LOGGER.log(Level.INFO, "EVALUATING THE SUDOKU RULES");
-        if(digit>=1 && digit<=9){
-            eligibility= isDigitSafeInRow(sudoku, row, digit) && isDigitSafeInColumn(sudoku, column, digit) && isDigitSafeInSubGrid(sudoku, row, column,digit);
-        }else {
-            throw new InvalidDigitException("Digit must be in between 1 and 9");
+
+        boolean isDigitValid = Utility.isDigitValid(digit); //checks if digit is in between 1-9
+        boolean isRowValid = Utility.isRowOrColumnValid(row, sudoku.length); //checks if row value is in between 1-9
+        boolean isColumnValid = Utility.isRowOrColumnValid(column, sudoku[0].length); //checks if column value is in between 1-9
+        boolean isPlaceSafe = Utility.isPlaceSafeForInsertion(sudoku, row, column); //checks if [row][column] cell is already filled or not
+
+        if (isDigitValid && isRowValid && isColumnValid && isPlaceSafe) {
+            eligibility = isDigitSafeInRow(sudoku, row, digit) && isDigitSafeInColumn(sudoku, column, digit) && isDigitSafeInSubGrid(sudoku, row, column, digit);
+        } else {
+            throw new InvalidDigitException("OOPs... Something went wrong...");
         }
         return eligibility;
     }
