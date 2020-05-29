@@ -1,8 +1,14 @@
 package com.assignment.solution.PlayingCard;
 
+import com.assignment.solution.exception.InvalidCardException;
+
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Utility extends Service {
+    private final static Logger LOGGER = Logger.getLogger(PlayingCardsSequence.class.getName());
+    CardValidation cardValidation;
 
     static HashSet<String> k_a = new HashSet<>();
     static final HashSet<String> finalKndA = new HashSet<String>() {
@@ -18,19 +24,25 @@ public class Utility extends Service {
      * @param cards
      * @return true or false
      */
-    public boolean checkSequence(String cards) {
+    public boolean checkSequence(String cards) throws InvalidCardException {
+        LOGGER.log(Level.INFO, "Executing card sequence rules.");
         int nextVal = 0;
         boolean isSeq = false;
+        cardValidation = new CardValidation();
+
         String[] cardArray = cards.split(",");
 
-        isSeq = isUniqueSuite(cardArray, String.valueOf(cardArray[0].charAt(0)));  //check if every card is of same type (Same Suite)
+        boolean isValidCards = cardValidation.cardValidation(cardArray); // checks the card validity related to the ranks and suits
+        String suit = cardValidation.cardSeparation(cardArray[0])[0];
+        isSeq = isUniqueSuite(cardArray, suit);  //check if every card is of same type (Same Suite)
 
-        if (isSeq) {
-            nextVal = getNextValue(String.valueOf(cardArray[0].charAt(2))); // get next sequential val for A, J, Q, K
+        if (isValidCards && isSeq) {
+            String rank = cardValidation.cardSeparation(cardArray[0])[1];
+            nextVal = getNextValue(rank); // get next sequential val
 
             for (int i = 1; i < cardArray.length; i++) {
 
-                int currentVal = getNumericRank(String.valueOf(cardArray[i].charAt(2))); // get the current value for the ranks
+                int currentVal = getNumericRank(cardValidation.cardSeparation(cardArray[i])[1]); // get the current value for the ranks
 
                 // check if current value is matching with the sequence
                 if (currentVal == nextVal) {
@@ -54,7 +66,9 @@ public class Utility extends Service {
      * @return currentVal
      */
     @Override
-    int getNumericRank(String rank) {
+    int getNumericRank(String rank) throws InvalidCardException {
+        LOGGER.log(Level.INFO, "Setting up currentValue based on rank");
+
         int currentVal = 0;
         if (rank.equals("A")) {
             if (k_a.contains("K")) {
@@ -74,7 +88,11 @@ public class Utility extends Service {
             if (k_a.containsAll(finalKndA)) {
                 currentVal = 0;
             } else {
-                currentVal = Integer.parseInt(rank);
+                try {
+                    currentVal = Integer.parseInt(rank);
+                }catch (Exception  e){
+                    throw new InvalidCardException("Card Rank is not valid: "+rank);
+                }
             }
         }
         return currentVal;
@@ -88,6 +106,7 @@ public class Utility extends Service {
      */
     @Override
     int getNextValue(String rank) {
+        LOGGER.log(Level.INFO, "Setting up nextValue based on rank");
         int nextVal;
         switch (rank) {
             case "A":
@@ -119,9 +138,13 @@ public class Utility extends Service {
      */
     @Override
     boolean isUniqueSuite(String[] cardArray, String suite) {
+        LOGGER.log(Level.INFO, "Checking if all cards of same suit");
+
+        cardValidation = new CardValidation();
         boolean uniqueSeq = false;
         for (int i = 1; i < cardArray.length; i++) {
-            String suiteOfNextCard = String.valueOf((cardArray[i].charAt(0)));
+
+            String suiteOfNextCard = cardValidation.cardSeparation(cardArray[i])[0]; // getting suit of card
             if (!suite.equals(suiteOfNextCard)) {
                 uniqueSeq = false;
                 break;

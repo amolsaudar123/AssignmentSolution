@@ -1,12 +1,21 @@
 package com.assignment.solution.PlayingCard;
 
+import com.assignment.solution.exception.InvalidCardException;
+import com.assignment.solution.sudoku.Sudoku;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * @author Amol Saudar
  */
 public class PlayingCardsSequence {
-    public static void main(String[] args) {
+    private final static Logger LOGGER = Logger.getLogger(PlayingCardsSequence.class.getName());
+
+    public static void main(String[] args) throws InvalidCardException {
         Utility  utility = new Utility();
-        System.out.println(utility.checkSequence("S#10,S#J,S#Q"));
+        LOGGER.log(Level.INFO, "Evaluating Card Sequence:");
+        System.out.println(utility.checkSequence("S#J,S#Q,S#K"));
     }
 
 

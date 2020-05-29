@@ -51,4 +51,12 @@ Sudoku:
 * Column Validation
 * Cell Validation
 * Logic wise comments 
+
+Playing card sequence:
+
+* Suit validation
+* Rank Validation
+* Logging 
+* Exception Handling 
+* Logic wise comments 
  
